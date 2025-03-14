@@ -1,0 +1,243 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 導入陳雨露演字體 */
+@font-face {
+    font-family: 'ChenYuluoyan';
+    src: url('/font/subset/ChenYuluoyan-2.0-Thin.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+:root {
+    --theme-yellow: #ffda85;
+    --theme-yellow-light: #fff8e1;
+    --theme-yellow-dark: #d4b366;
+    --theme-color: #ec4899;
+    /* 默認粉色主題 */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'ChenYuluoyan', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+        "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+    background-color: #000;
+    color: var(--theme-yellow-light);
+    height: 100vh;
+    width: 100vw;
+}
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+/* 視差效果相關樣式 */
+.parallax-container {
+    perspective: 1px;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    /* 在iOS上提供平滑滾動 */
+    scroll-behavior: smooth;
+    /* 平滑滾動效果 */
+}
+
+.parallax-content {
+    position: relative;
+    width: 100%;
+}
+
+.parallax-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: transform 0.1s ease-out;
+    will-change: transform;
+    /* 提示瀏覽器這個屬性會被動畫 */
+}
+
+/* 陰影漸層 */
+.shadow-gradient {
+    pointer-events: none;
+    /* 確保這個元素不會阻止點擊 */
+    position: absolute;
+    width: 100%;
+    background-position: bottom;
+    background-repeat: repeat-x;
+    transition: opacity 0.3s ease;
+}
+
+/* 自定義滾動條樣式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--theme-yellow-dark);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-yellow);
+}
+
+/* 自定義選中文字的樣式 */
+::selection {
+    background-color: var(--theme-yellow);
+    color: #000;
+}
+
+/* 動畫效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s ease-in-out forwards;
+}
+
+/* 進度條動畫 */
+@keyframes progress {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+.animate-progress {
+    animation: progress 1.5s linear forwards;
+}
+
+/* 可以使用主題色變數的元素 */
+.theme-color {
+    color: var(--theme-color);
+}
+
+.theme-bg {
+    background-color: var(--theme-color);
+}
+
+.theme-border {
+    border-color: var(--theme-color);
+}
+
+/* 平滑過渡效果 */
+.smooth-transition {
+    transition: all 0.5s ease;
+}
+
+
+.ink-content {
+    -webkit-mask-image: url('/images/ink.gif');
+    -webkit-mask-size: cover;
+    -webkit-mask-position: center;
+    mask-image: url('/images/ink.gif');
+    mask-size: cover;
+    mask-position: center;
+    mask-composite: exclude;
+
+    animation: inkReveal 3s ease-out forwards;
+    background-color: rgb(228, 162, 224);
+}
+
+@keyframes inkReveal {
+    0% {
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.2;
+    }
+
+    30% {
+        opacity: 0.15;
+    }
+
+    90% {
+        opacity: 0.05;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+/* 3D場景深色面板樣式 */
+.scene-3d-panel {
+    @apply bg-black/60 border rounded-lg;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 191, 0, 0.15);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* 統一的按鈕樣式 */
+.styled-button {
+    @apply p-2 bg-pink-500/30 hover:bg-pink-500/50 rounded-full border border-pink-300/50 text-white shadow-lg backdrop-blur-sm transition-all duration-300;
+}
+
+.styled-button-amber {
+    @apply p-2 bg-amber-500/30 hover:bg-amber-500/50 rounded-full border border-amber-300/50 text-white shadow-lg backdrop-blur-sm transition-all duration-300;
+}
+
+.styled-icon-button {
+    @apply p-2 bg-pink-500/30 hover:bg-pink-500/50 rounded-full border border-pink-300/50 shadow-lg backdrop-blur-sm transition-all duration-300 flex items-center justify-center;
+}
+
+.styled-icon-button-amber {
+    @apply p-2 bg-amber-500/30 hover:bg-amber-500/50 rounded-full border border-amber-300/50 shadow-lg backdrop-blur-sm transition-all duration-300 flex items-center justify-center;
+}
+
+.styled-panel {
+    @apply bg-gradient-to-br from-pink-50 to-pink-100 rounded-xl shadow-2xl p-4 border border-pink-200/50 backdrop-blur-md;
+}
+
+.styled-panel-amber {
+    @apply bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl shadow-2xl p-4 border border-amber-200/50 backdrop-blur-md;
+}
+
+/* 確保ink動畫每次重新加載頁面時都會運行 */
+@media (prefers-reduced-motion: no-preference) {
+
+    .ink-reveal-animation,
+    .ink-content {
+        will-change: mask-position, opacity;
+    }
+}

@@ -1,0 +1,35 @@
+{
+    "name": "ncc-intro",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "setup": "node setup.js",
+        "setup-audio": "node create-audio-placeholders.js",
+        "prestart": "npm run setup && npm run setup-audio",
+        "dev": "vite",
+        "build": "npm run subset-font && vite build",
+        "preview": "vite preview",
+        "subset-font": "node scripts/fontSubset.js",
+        "font-build": "npm run subset-font"
+    },
+    "dependencies": {
+        "@react-three/drei": "^10.0.4",
+        "@react-three/fiber": "^9.1.0",
+        "@react-three/postprocessing": "^3.0.4",
+        "@types/three": "^0.174.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "three": "^0.174.0"
+    },
+    "devDependencies": {
+        "@types/react": "^18.2.55",
+        "@types/react-dom": "^18.2.19",
+        "@vitejs/plugin-react": "^4.2.1",
+        "autoprefixer": "^10.4.17",
+        "fontmin": "^2.0.0",
+        "postcss": "^8.4.35",
+        "tailwindcss": "^3.4.1",
+        "vite": "^5.1.0"
+    }
+}
