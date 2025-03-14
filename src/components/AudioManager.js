@@ -5,6 +5,7 @@ function AudioManager() {
     const backgroundMusicRef = useRef(null);
     const [isMuted, setIsMuted] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [hasStarted, setHasStarted] = useState(false);
 
     // 偵測視窗大小變化
     useEffect(() => {
@@ -24,15 +25,32 @@ function AudioManager() {
         const bgMusic = new Audio('/audio/ambient-forest-night.mp3');
         bgMusic.loop = true;
         bgMusic.volume = 0.25; // 設置默認音量
+        bgMusic.preload = 'auto'; // 預加載音頻
 
         // 將音頻元素存儲到ref中
         backgroundMusicRef.current = bgMusic;
 
         // 當用戶與頁面互動時才播放音樂（瀏覽器政策）
-        const handleInteraction = () => {
-            if (backgroundMusicRef.current && backgroundMusicRef.current.paused) {
-                backgroundMusicRef.current.play()
-                    .catch(error => console.warn('無法自動播放音樂：', error));
+        const handleInteraction = async () => {
+            if (!hasStarted && backgroundMusicRef.current && backgroundMusicRef.current.paused) {
+                try {
+                    setHasStarted(true);
+                    // 設置音量為0，避免突然的聲音
+                    backgroundMusicRef.current.volume = 0;
+                    await backgroundMusicRef.current.play();
+                    // 漸進式增加音量
+                    let vol = 0;
+                    const fadeIn = setInterval(() => {
+                        vol += 0.05;
+                        if (vol >= 0.25) {
+                            vol = 0.25;
+                            clearInterval(fadeIn);
+                        }
+                        backgroundMusicRef.current.volume = vol;
+                    }, 100);
+                } catch (error) {
+                    console.warn('無法自動播放音樂：', error);
+                }
             }
 
             // 移除事件監聽器，避免重複
@@ -53,7 +71,7 @@ function AudioManager() {
             document.removeEventListener('click', handleInteraction);
             document.removeEventListener('touchstart', handleInteraction);
         };
-    }, []);
+    }, [hasStarted]); // 添加 hasStarted 作為依賴項
 
     // 切換靜音狀態
     const toggleMute = () => {

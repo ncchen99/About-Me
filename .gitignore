@@ -32,3 +32,11 @@ Thumbs.db
 
 # cursor
 ./cursor
+
+/dist
+/build
+/node_modules
+/public/audio
+/public/images
+/public/models
+/public/videos

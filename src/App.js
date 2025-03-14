@@ -155,7 +155,39 @@ function App() {
     };
 
     return (
-        <div className="w-full h-full bg-black relative">
+        <div className="w-full h-full bg-black relative overflow-hidden" style={{ scrollbarWidth: 'none' }}>
+            <style>{`
+                ::-webkit-scrollbar {
+                    display: none;
+                }
+                body {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+                @keyframes neonPulse {
+                    0% {
+                        box-shadow: 
+                            0 0 5px 1px rgba(245, 158, 11, 0.8),
+                            0 0 10px 2px rgba(245, 158, 11, 0.6),
+                            0 0 15px 3px rgba(245, 158, 11, 0.4),
+                            0 0 20px 4px rgba(245, 158, 11, 0.2);
+                    }
+                    50% {
+                        box-shadow: 
+                            0 0 10px 2px rgba(245, 158, 11, 0.9),
+                            0 0 20px 4px rgba(245, 158, 11, 0.7),
+                            0 0 30px 6px rgba(245, 158, 11, 0.5),
+                            0 0 40px 8px rgba(245, 158, 11, 0.3);
+                    }
+                    100% {
+                        box-shadow: 
+                            0 0 5px 1px rgba(245, 158, 11, 0.8),
+                            0 0 10px 2px rgba(245, 158, 11, 0.6),
+                            0 0 15px 3px rgba(245, 158, 11, 0.4),
+                            0 0 20px 4px rgba(245, 158, 11, 0.2);
+                    }
+                }
+            `}</style>
             {/* 預加載3D場景資源 */}
             {resourcesPreloaded && <PreloadResources isVisible={false} />}
 
@@ -169,12 +201,22 @@ function App() {
             {currentView === 'transitioning' && (
                 <div className="fixed inset-0 bg-black z-30 flex items-center justify-center">
                     <div className="text-center text-amber-200">
-                        <div className="mb-4 text-2xl">入夜了...</div>
-                        <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="mb-4 text-2xl">夜深了...</div>
+                        <div className="w-64 h-3 bg-gray-900 rounded-full overflow-hidden shadow-inner relative">
                             <div
-                                className="h-full bg-amber-500 transition-all"
-                                style={{ width: `${transitionProgress * 100}%` }}
+                                className="h-full bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 transition-all"
+                                style={{
+                                    width: `${transitionProgress * 100}%`,
+                                    boxShadow: `
+                                        0 0 5px 1px rgba(245, 158, 11, 0.8),
+                                        0 0 10px 2px rgba(245, 158, 11, 0.6),
+                                        0 0 15px 3px rgba(245, 158, 11, 0.4),
+                                        0 0 20px 4px rgba(245, 158, 11, 0.2)
+                                    `,
+                                    animation: 'neonPulse 1.5s ease-in-out infinite'
+                                }}
                             />
+                            <div className="absolute top-0 left-0 w-full h-full opacity-50 bg-[radial-gradient(circle,_rgba(255,255,255,0.8)_0%,_transparent_70%)] animate-pulse"></div>
                         </div>
                     </div>
                 </div>
