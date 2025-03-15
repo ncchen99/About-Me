@@ -2,7 +2,16 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-    plugins: [react()],
+    plugins: [
+        react({
+            include: "**/*.{jsx,js,ts,tsx}",
+            babel: {
+                plugins: [
+                    // 添加額外需要的 babel 插件
+                ]
+            }
+        })
+    ],
     server: {
         port: 3000,
         open: true
@@ -17,9 +26,11 @@ export default defineConfig({
             '@': '/src'
         }
     },
-    esbuild: {
-        loader: 'jsx',
-        include: /src\/.*\.[tj]sx?$/,
-        exclude: []
+    optimizeDeps: {
+        esbuildOptions: {
+            loader: {
+                '.js': 'jsx'
+            }
+        }
     }
 }) 

@@ -18,6 +18,10 @@
         "@react-three/fiber": "^9.1.0",
         "@react-three/postprocessing": "^3.0.4",
         "@types/three": "^0.174.0",
+        "framer-motion": "^12.5.0",
+        "lenis": "^1.2.3",
+        "motion": "^12.5.0",
+        "motion-plus": "^0.1.5",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "three": "^0.174.0"
