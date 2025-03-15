@@ -53,12 +53,11 @@ const ParallaxHome = ({ onScrollToBottom }) => {
 
             try {
                 lenis.on('scroll', ({ scroll, velocity, direction, progress }) => {
-                    console.log('scroll', scroll, 'progress', progress);
                     scrollYMotionValue.set(scroll);
                     setScrollPosition(scroll);
 
                     // 判斷是否進入3D模式的閾值，使用當前顯示的滾動位置
-                    const threshold = 1300; // 增加閾值，從1200改為2400，讓用戶需要捲動更多才進入3D模式
+                    const threshold = 1600; // 增加閾值，從1200改為2400，讓用戶需要捲動更多才進入3D模式
                     const newIs3DMode = scroll > threshold;
 
                     // 更新主題顏色
@@ -66,7 +65,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                     setIs3DMode(newIs3DMode);
 
                     // 檢查是否到達底部
-                    if (progress > 0.7 && onScrollToBottom && direction === 1) {
+                    if (progress > 0.94 && onScrollToBottom && direction === 1) {
                         onScrollToBottom();
                     }
                 });
@@ -456,7 +455,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 ref={containerRef}
                 className="parallax-container h-screen w-full relative"
             >
-                <div className="parallax-content" style={{ height: 'auto' }}>
+                <div className="parallax-content" style={{ minHeight: '600vh', height: 'auto' }}>
                     {/* 天空圖層 - 使用 Framer Motion */}
                     <motion.div
                         className="parallax-layer"
@@ -495,7 +494,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                     />
 
                     {/* 用於測試滾動的填充內容 - 移動到parallax-content內部 */}
-                    <div className="h-[600vh]" style={{ background: 'linear-gradient(black, black)' }}>
+                    <div className="h-[300vh]" style={{ height: '300vh', minHeight: '4000px', background: 'linear-gradient(black, black)' }}>
                         {/* 刪除滾動測試文字 */}
                     </div>
                 </div>
