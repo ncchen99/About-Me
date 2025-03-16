@@ -49,7 +49,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 direction: 'vertical',
                 gestureDirection: 'vertical',
                 smooth: true,
-                mouseMultiplier: 1, // 增加滑鼠滾動靈敏度
+                mouseMultiplier: 1.2, // 增加滑鼠滾動靈敏度
                 smoothTouch: true, // 保持觸摸滑動平滑
                 touchMultiplier: 3, // 增加觸摸滑動靈敏度
                 normalizeWheel: true, // 標準化滑鼠滾輪行為
@@ -71,7 +71,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                     setScrollPosition(e.scroll);
 
                     // 根據滾動位置設置3D模式
-                    const threshold = 1700;
+                    const threshold = 2000;
                     const newIs3DMode = e.scroll > threshold;
                     if (is3DMode !== newIs3DMode) {
                         updateThemeColor(newIs3DMode);
@@ -80,10 +80,24 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 }
 
                 // 檢查是否到達底部
-                if (e.scroll > 1700 && onScrollToBottom && e.direction === 1) {
+                if (e.scroll > 2000 && onScrollToBottom && e.direction === 1) {
                     onScrollToBottom();
                 }
             });
+
+            // 監聽滾輪事件 - 在移動設備上添加觸摸事件處理
+            const handleWheel = (e) => {
+                // 移除日誌輸出以減少控制台污染和性能開銷
+            };
+
+            // 添加專門的觸摸事件處理，提高移動設備上的滑動體驗
+            const handleTouchStart = (e) => {
+                // 記錄觸摸起始位置，但不阻止默認行為
+            };
+
+            const handleTouchMove = (e) => {
+                // 確保觸摸事件可以正常傳播到Lenis
+            };
 
             if (scrollWrapperRef.current) {
                 scrollWrapperRef.current.addEventListener('wheel', handleWheel, { passive: true });
