@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { motion, useScroll, useTransform, useMotionValue, useSpring, useAnimation, AnimatePresence, frame, cancelFrame } from "framer-motion";
 import { animate, stagger } from "motion";
 import { splitText } from "motion-plus";
@@ -14,6 +14,8 @@ const ParallaxHome = ({ onScrollToBottom }) => {
     const [animationsReady, setAnimationsReady] = useState(false); // 追蹤初始動畫是否完成
     const [arrowVisible, setArrowVisible] = useState(false); // 控制引導箭頭的顯示
     const containerRef = useRef(null);
+    const scrollWrapperRef = useRef(null); // 滾動容器參考
+    const scrollContentRef = useRef(null); // 滾動內容參考
     const groundLayerRef = useRef(null); // 參考地面圖層
     const inkAnimationRef = useRef(null); // 用於重設ink動畫
     const titleRef = useRef(null); // 標題文字引用
@@ -24,6 +26,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
     const modalRef = useRef(null); // 模態框參考
     const titleAnimCompleteRef = useRef(false); // 追蹤標題動畫是否完成
     const descAnimCompleteRef = useRef(false); // 追蹤描述動畫是否完成
+    const lenisRef = useRef(null); // 存儲 Lenis 實例的引用
 
     // 初始高度調整 - 修改起始位置高20px
     const initialMountainOffset = 15;
@@ -35,93 +38,126 @@ const ParallaxHome = ({ onScrollToBottom }) => {
     // 使用 requestAnimationFrame 驅動 Lenis
     useEffect(() => {
         try {
-            // 直接在此處創建 Lenis 實例，參考 Olivier Larose 教學
+            console.log('初始化Lenis滾動...');
+
+            // 創建 Lenis 實例，使用指定的容器
             const lenis = new Lenis({
-                wrapper: window, // 使用窗口作為滾動容器
-                content: document.querySelector('.parallax-content'), // 指定滾動內容
+                wrapper: scrollWrapperRef.current, // 指定滾動容器
+                content: scrollContentRef.current, // 指定滾動內容
+                duration: 1.0, // 稍微降低持續時間以減少卡頓感
+                easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)), // 使用更簡單的緩動函數
+                direction: 'vertical',
+                gestureDirection: 'vertical',
                 smooth: true,
-                smoothTouch: true,
-                duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-                orientation: 'vertical',
-                gestureOrientation: 'vertical',
-                smoothWheel: true,
-                wheelMultiplier: 1.25,
-                touchMultiplier: 1.6,
-                syncTouch: true, // 啟用觸摸同步，提升移動設備的體驗
+                mouseMultiplier: 1, // 增加滑鼠滾動靈敏度
+                smoothTouch: true, // 保持觸摸滑動平滑
+                touchMultiplier: 3, // 增加觸摸滑動靈敏度
+                normalizeWheel: true, // 標準化滑鼠滾輪行為
+                touchInertiaMultiplier: 2.5, // 增加觸摸慣性，讓手機滑動更流暢
+                infinite: false,
             });
 
-            try {
-                lenis.on('scroll', ({ scroll, velocity, direction, progress }) => {
-                    console.log('scroll', scroll, 'progress', progress);
-                    scrollYMotionValue.set(scroll);
-                    setScrollPosition(scroll);
+            console.log('Lenis實例創建成功:', lenis);
 
-                    // 判斷是否進入3D模式的閾值，使用當前顯示的滾動位置
-                    const threshold = 1200; // 增加閾值，從1200改為2400，讓用戶需要捲動更多才進入3D模式
-                    const newIs3DMode = scroll > threshold;
+            // 存儲 Lenis 實例以便於清理
+            lenisRef.current = lenis;
 
-                    // 更新主題顏色
-                    updateThemeColor(newIs3DMode);
-                    setIs3DMode(newIs3DMode);
 
-                    // 檢查是否到達底部
-                    if (isMobile ? progress > 0.45 : progress > 0.7 && onScrollToBottom && direction === 1) {
-                        onScrollToBottom();
+            // 設置滾動事件監聽 - 減少不必要的日誌輸出
+            lenis.on('scroll', (e) => {
+                // 只在滾動距離明顯變化時才更新值，減少重複計算
+                if (Math.abs(scrollYMotionValue.get() - e.scroll) > 0.5) {
+                    scrollYMotionValue.set(e.scroll);
+                    setScrollPosition(e.scroll);
+
+                    // 根據滾動位置設置3D模式
+                    const threshold = 1700;
+                    const newIs3DMode = e.scroll > threshold;
+                    if (is3DMode !== newIs3DMode) {
+                        updateThemeColor(newIs3DMode);
+                        setIs3DMode(newIs3DMode);
                     }
-                });
-            } catch (scrollError) {
-                // 錯誤處理，但不顯示調試信息
+                }
+
+                // 檢查是否到達底部
+                if (e.scroll > 1700 && onScrollToBottom && e.direction === 1) {
+                    onScrollToBottom();
+                }
+            });
+
+            if (scrollWrapperRef.current) {
+                scrollWrapperRef.current.addEventListener('wheel', handleWheel, { passive: true });
+                scrollWrapperRef.current.addEventListener('touchstart', handleTouchStart, { passive: true });
+                scrollWrapperRef.current.addEventListener('touchmove', handleTouchMove, { passive: true });
             }
 
-            let reqId;
-            const raf = (time) => {
+            // Lenis 需要通過 requestAnimationFrame 來更新 - 優化RAF循環
+            function raf(time) {
                 lenis.raf(time);
-                reqId = requestAnimationFrame(raf);
-            };
 
-            reqId = requestAnimationFrame(raf);
+                // 使用更高效的方式請求下一幀，不創建新的函數實例
+                requestAnimationFrame(raf);
+            }
 
-            // 添加鍵盤事件處理，禁用上下鍵控制
+            // 啟動動畫循環
+            requestAnimationFrame(raf);
+
+            // 添加鍵盤控制
             const handleKeyDown = (e) => {
                 if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
-                    e.preventDefault();
+                    console.log(`按下${e.key}鍵`);
+
+                    if (e.key === 'ArrowDown') {
+                        lenis.scrollTo(lenis.scroll + 100, { immediate: false, duration: 0.5 });
+                    } else {
+                        lenis.scrollTo(Math.max(0, lenis.scroll - 100), { immediate: false, duration: 0.5 });
+                    }
                 }
             };
 
             window.addEventListener('keydown', handleKeyDown);
 
             return () => {
-                cancelAnimationFrame(reqId);
-                // 清理 Lenis 實例
-                lenis.destroy();
-                // 移除鍵盤事件監聽器
+                // 清理資源
+                if (lenisRef.current) {
+                    lenisRef.current.destroy();
+                }
                 window.removeEventListener('keydown', handleKeyDown);
+                if (scrollWrapperRef.current) {
+                    scrollWrapperRef.current.removeEventListener('wheel', handleWheel);
+                    scrollWrapperRef.current.removeEventListener('touchstart', handleTouchStart);
+                    scrollWrapperRef.current.removeEventListener('touchmove', handleTouchMove);
+                }
             };
         } catch (error) {
-            // 錯誤處理，但不顯示調試信息
+            console.error('初始化Lenis時出錯:', error);
         }
-    }, [onScrollToBottom]); // 加入 onScrollToBottom 作為依賴
-
-    // 背景平滑轉換效果
-    const skyY = useTransform(scrollYMotionValue, [0, 1600], [0, -100]);  // 延長滾動範圍，增加移動量
-    const mountainY = useTransform(scrollYMotionValue, [0, 1600], [-initialMountainOffset, -250 - initialMountainOffset]);  // 延長滾動範圍，增加移動量
-    const groundY = useTransform(scrollYMotionValue, [0, 1600], [-initialGroundOffset, -400 - initialGroundOffset]);  // 延長滾動範圍，增加移動量
-
-    // 平滑化滾動值
-    const smoothScrollY = useSpring(scrollYMotionValue, { damping: 25, stiffness: 120, mass: 1 });
-
-    // 背景亮度控制
-    const skyBrightness = useTransform(scrollYMotionValue, [0, 1000], [1, 0.4]);  // 調整亮度範圍
-    const mountainBrightness = useTransform(scrollYMotionValue, [0, 1000], [1, 0.4]);  // 調整亮度範圍
-    const groundBrightness = useTransform(scrollYMotionValue, [0, 1200], [1, 0.4]);  // 調整亮度範圍
-
-    // 文字透明度控制 - 延長文字保持可見的距離，與新的3D模式閾值相匹配
-    const textOpacity = useTransform(scrollYMotionValue, [800, 2200], [1, 0]);
+    }, [onScrollToBottom, isMobile]);
 
     // 滑鼠移動的平滑追蹤 - 使用彈簧物理效果
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+
+    // 背景平滑轉換效果 - 直接在頂層使用 hook
+    const skyY = useTransform(scrollYMotionValue, [0, 1600], [0, -100]);
+    const mountainY = useTransform(scrollYMotionValue, [0, 1600], [-initialMountainOffset, -250 - initialMountainOffset]);
+    const groundY = useTransform(scrollYMotionValue, [0, 1600], [-initialGroundOffset, -400 - initialGroundOffset]);
+
+    // 平滑化滾動值 - 優化彈簧參數
+    const smoothScrollY = useSpring(scrollYMotionValue, {
+        damping: 30,       // 稍微增加阻尼以減少彈跳
+        stiffness: 150,    // 增加剛性以減少延遲感
+        mass: 0.8,         // 調整質量以更均衡
+        restDelta: 0.001   // 精細的靜止判斷
+    });
+
+    // 背景亮度控制 - 直接在頂層使用 hook
+    const skyBrightness = useTransform(scrollYMotionValue, [0, 1000], [1, 0.4]);
+    const mountainBrightness = useTransform(scrollYMotionValue, [0, 1000], [1, 0.4]);
+    const groundBrightness = useTransform(scrollYMotionValue, [0, 1000], [1, 0.4]);
+
+    // 文字透明度控制 - 直接在頂層使用 hook
+    const textOpacity = useTransform(scrollYMotionValue, [1200, 1600], [1, 0]);
 
     // 平滑化滑鼠移動 - 提高阻尼以減少抖動，限制動畫完成時間，更加流暢
     const smoothMouseX = useSpring(mouseX, {
@@ -260,8 +296,8 @@ const ParallaxHome = ({ onScrollToBottom }) => {
         }
     }, [animationsReady]); // 依賴於animationsReady狀態
 
-    // 更新主題顏色函數
-    const updateThemeColor = (is3D) => {
+    // 使用 useCallback 優化效能
+    const updateThemeColor = useCallback((is3D) => {
         // 設置CSS變數供全局使用
         document.documentElement.style.setProperty('--theme-color', is3D ? '#f59e0b' : '#ec4899');
 
@@ -293,7 +329,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 panel.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(236, 72, 153, 0.15)';
             }
         });
-    };
+    }, []);
 
     // 滑鼠移動效果
     useEffect(() => {
@@ -396,33 +432,33 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                     return {
                         ...baseStyle,
                         top: 0,
-                        height: 'auto',
-                        minHeight: '100vh',
+                        height: '100%',
+                        minHeight: '140vh', // 增加高度確保圖片顯示完整
                         backgroundImage: `url('/images/sky.png')`,
-                        backgroundSize: '100% auto',
-                        backgroundPosition: 'center top',
+                        backgroundSize: 'cover', // 改用 cover 確保圖片填滿
+                        backgroundPosition: 'center center',
                         zIndex: 1
                     };
                 case 'mountain':
                     return {
                         ...baseStyle,
-                        top: -initialMountainOffset + 'px', // 明確使用像素單位
-                        height: 'auto',
-                        minHeight: '100vh',
+                        top: 0, // 移除負值偏移
+                        height: '100%',
+                        minHeight: '140vh', // 增加高度確保圖片顯示完整
                         backgroundImage: `url('/images/mount.png')`,
-                        backgroundSize: '100% auto',
-                        backgroundPosition: 'center top',
+                        backgroundSize: 'cover', // 改用 cover 確保圖片填滿
+                        backgroundPosition: 'center center',
                         zIndex: 2
                     };
                 case 'ground':
                     return {
                         ...baseStyle,
-                        top: -initialGroundOffset + 'px', // 明確使用像素單位
-                        height: 'auto',
-                        minHeight: '100vh',
+                        top: 0, // 移除負值偏移
+                        height: '100%',
+                        minHeight: '140vh', // 增加高度確保圖片顯示完整
                         backgroundImage: `url('/images/ground.png')`,
-                        backgroundSize: '100% auto',
-                        backgroundPosition: 'center top',
+                        backgroundSize: 'cover', // 改用 cover 確保圖片填滿
+                        backgroundPosition: 'center center',
                         zIndex: 3
                     };
                 default:
@@ -432,8 +468,8 @@ const ParallaxHome = ({ onScrollToBottom }) => {
     };
 
     return (
-        <div className="lenis lenis-smooth">
-            {/* Ink Effect Mask Animation - 使用新的結構，參考Lundev網站 */}
+        <div className="w-full h-screen overflow-hidden">
+            {/* Ink Effect Mask Animation */}
             <div className="fixed inset-0 z-50 overflow-hidden pointer-events-none">
                 <div className="ink-reveal-animation absolute inset-0 bg-transparent"></div>
                 <div className="ink-content absolute inset-0 bg-transparent"></div>
@@ -452,51 +488,75 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 />
             )}
 
-            <div
-                ref={containerRef}
-                className="parallax-container h-screen w-full relative"
+            {/* 視差背景層 - 移動到滾動容器外部，確保不受滾動容器影響 */}
+            <motion.div
+                className="fixed inset-0 z-0"
+                style={{
+                    pointerEvents: 'none',
+                    overflow: 'visible', // 確保內容不被截斷
+                    height: '100vh'
+                }}
             >
-                <div className="parallax-content" style={{ minHeight: '600vh', height: 'auto' }}>
-                    {/* 天空圖層 - 使用 Framer Motion */}
-                    <motion.div
-                        className="parallax-layer"
-                        style={{
-                            ...getBackgroundStyle('sky'),
-                            y: skyY, // 基本 Y 位置由滾動控制
-                            translateY: skyYOffset, // 額外的 Y 位置由滑鼠控制
-                            x: skyX,
-                            filter: `brightness(${skyBrightness.get()})`,
-                        }}
-                    />
+                {/* 天空圖層 */}
+                <motion.div
+                    className="absolute inset-0"
+                    style={{
+                        ...getBackgroundStyle('sky'),
+                        y: skyY,
+                        translateY: skyYOffset,
+                        x: skyX,
+                        filter: `brightness(${skyBrightness.get()})`,
+                    }}
+                />
 
-                    {/* 山脈圖層 - 使用 Framer Motion */}
-                    <motion.div
-                        className="parallax-layer"
-                        style={{
-                            ...getBackgroundStyle('mountain'),
-                            y: mountainY, // 基本 Y 位置由滾動控制
-                            translateY: mountainYOffset, // 額外的 Y 位置由滑鼠控制
-                            x: mountainX,
-                            filter: `brightness(${mountainBrightness.get()})`,
-                        }}
-                    />
+                {/* 山脈圖層 */}
+                <motion.div
+                    className="absolute inset-0"
+                    style={{
+                        ...getBackgroundStyle('mountain'),
+                        y: mountainY,
+                        translateY: mountainYOffset,
+                        x: mountainX,
+                        filter: `brightness(${mountainBrightness.get()})`,
+                    }}
+                />
 
-                    {/* 地面圖層 - 使用 Framer Motion */}
-                    <motion.div
-                        ref={groundLayerRef}
-                        className="parallax-layer"
-                        style={{
-                            ...getBackgroundStyle('ground'),
-                            y: groundY, // 基本 Y 位置由滾動控制 
-                            translateY: groundYOffset, // 額外的 Y 位置由滑鼠控制
-                            x: groundX,
-                            filter: `brightness(${groundBrightness.get()})`,
-                        }}
-                    />
+                {/* 地面圖層 */}
+                <motion.div
+                    ref={groundLayerRef}
+                    className="absolute inset-0"
+                    style={{
+                        ...getBackgroundStyle('ground'),
+                        y: groundY,
+                        translateY: groundYOffset,
+                        x: groundX,
+                        filter: `brightness(${groundBrightness.get()})`,
+                    }}
+                />
+            </motion.div>
 
-                    {/* 用於測試滾動的填充內容 - 移動到parallax-content內部 */}
-                    <div className="h-[100vh]" style={{ height: '100vh', background: 'linear-gradient(black, black)' }}>
-                        {/* 刪除滾動測試文字 */}
+            {/* 滾動容器 - 優化移動設備上的觸摸處理 */}
+            <div
+                ref={scrollWrapperRef}
+                className="h-screen w-full overflow-hidden relative touch-auto"
+                style={{
+                    background: 'transparent',
+                    WebkitOverflowScrolling: 'touch' // 在iOS上啟用動量滾動
+                }}
+            >
+                {/* 滾動內容 */}
+                <div
+                    ref={scrollContentRef}
+                    className="w-full will-change-transform"
+                    style={{
+                        minHeight: '500vh',
+                        background: 'transparent',
+                        touchAction: 'pan-y' // 明確允許垂直平移/滾動
+                    }}
+                >
+                    {/* 填充滾動高度 - 這裡只需要提供滾動高度，不顯示任何內容 */}
+                    <div className="h-[500vh] bg-transparent">
+                        {/* 這裡是為了提供足夠的滾動高度 */}
                     </div>
                 </div>
             </div>
@@ -552,14 +612,14 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                         <br /> 我愛你，也愛這片大地和浩瀚星空
                     </motion.p>
 
-                    {/* 引導箭頭 - 使用whileInView實現更流暢的動畫 */}
+                    {/* 引導箭頭 */}
                     <motion.div
                         ref={arrowRef}
                         className="flex flex-col items-center mt-4"
                         initial={{ opacity: 0, y: 20 }}
                         animate={arrowVisible ? { opacity: 1, y: 0 } : {}}
                         transition={{
-                            duration: 0.6, // 加快出現速度
+                            duration: 0.6,
                             ease: "easeOut",
                             type: "spring",
                             bounce: 0.3
@@ -569,10 +629,10 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                             className="flex flex-col items-center"
                             animate={{ y: [0, 10, 0] }}
                             transition={{
-                                duration: 1.5, // 加快脈動速度
+                                duration: 1.5,
                                 repeat: Infinity,
                                 ease: "easeInOut",
-                                delay: 0.2 // 減少延遲時間
+                                delay: 0.2
                             }}
                         >
                             <span className="text-lg text-white mb-1">向下滾動</span>
@@ -595,7 +655,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 </div>
             </motion.div>
 
-            {/* 素材資訊按鈕 - 移除放大效果 */}
+            {/* 素材資訊按鈕 */}
             <motion.button
                 onClick={() => setShowCredits(true)}
                 className="fixed bottom-4 right-4 z-20 p-2 bg-pink-500/30 hover:bg-pink-500/50 rounded-full border border-pink-300/50 text-white shadow-lg backdrop-blur-sm transition-all duration-300 pointer-events-auto styled-button"
@@ -607,7 +667,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 </svg>
             </motion.button>
 
-            {/* 素材資訊彈出視窗 - 使用 AnimatePresence 處理進出動畫 - 直接使用內置的動畫狀態 */}
+            {/* 素材資訊彈出視窗 - 保持不變 */}
             <AnimatePresence>
                 {showCredits && (
                     <motion.div
@@ -719,7 +779,7 @@ const ParallaxHome = ({ onScrollToBottom }) => {
                 )}
             </AnimatePresence>
 
-            {/* 文字分割動畫樣式 - 移除 jsx 屬性以解決警告 */}
+            {/* 文字分割動畫樣式 */}
             <style>{`
                 .split-word {
                     will-change: transform, opacity;
