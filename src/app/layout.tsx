@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "個人介紹網頁",
-  description: "使用 Next.js、React、Tailwind CSS 建立的個人介紹網頁",
+  description: "使用 Next.js、React、Styled-components、GSAP 建立的個人介紹網頁",
 };
 
 export default function RootLayout({
@@ -32,6 +32,7 @@ export default function RootLayout({
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         <StyledComponentsRegistry>
           <StyledComponentsProvider>

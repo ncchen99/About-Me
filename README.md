@@ -1,12 +1,12 @@
 # 個人介紹網頁
 
-使用 Next.js、React、Tailwind CSS 建立的個人介紹網頁，具有登入功能、GraphQL、Firebase 整合和 Phaser 互動畫面。
+使用 Next.js、React、Styled-components 建立的個人介紹網頁，具有登入功能、GraphQL、Firebase 整合和 Phaser 互動畫面。
 
 ## 技術堆疊
 
 - **前端框架**: Next.js 15 (App Router)
 - **UI 庫**: React 18
-- **樣式**: Tailwind CSS
+- **樣式**: Styled-components
 - **圖標**: Boxicons
 - **認證**: NextAuth.js
 - **資料庫**: Firebase Firestore
