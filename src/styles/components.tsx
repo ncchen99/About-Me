@@ -17,10 +17,10 @@ export const Container = styled.div`
 
 // 按鈕組件
 interface ButtonProps {
-    variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
-    size?: 'sm' | 'md' | 'lg'
-    fullWidth?: boolean
-    disabled?: boolean
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+  $fullWidth?: boolean
+  disabled?: boolean
 }
 
 export const Button = styled.button<ButtonProps>`
@@ -35,32 +35,32 @@ export const Button = styled.button<ButtonProps>`
   outline: none;
 
   ${props => {
-        switch (props.size) {
-            case 'sm':
-                return css`
+    switch (props.size) {
+      case 'sm':
+        return css`
           padding: 0.5rem 1rem;
           font-size: 0.875rem;
           height: 2rem;
         `
-            case 'lg':
-                return css`
+      case 'lg':
+        return css`
           padding: 0.75rem 2rem;
           font-size: 1.125rem;
           height: 3rem;
         `
-            default:
-                return css`
+      default:
+        return css`
           padding: 0.625rem 1.5rem;
           font-size: 1rem;
           height: 2.5rem;
         `
-        }
-    }}
+    }
+  }}
 
   ${props => {
-        switch (props.variant) {
-            case 'secondary':
-                return css`
+    switch (props.variant) {
+      case 'secondary':
+        return css`
           background-color: #F3F4F6;
           color: #374151;
           border: 1px solid #D1D5DB;
@@ -69,8 +69,8 @@ export const Button = styled.button<ButtonProps>`
             background-color: #E5E7EB;
           }
         `
-            case 'danger':
-                return css`
+      case 'danger':
+        return css`
           background-color: #DC2626;
           color: white;
           
@@ -78,8 +78,8 @@ export const Button = styled.button<ButtonProps>`
             background-color: #B91C1C;
           }
         `
-            case 'ghost':
-                return css`
+      case 'ghost':
+        return css`
           background-color: transparent;
           color: #374151;
           border: 1px solid #D1D5DB;
@@ -88,8 +88,8 @@ export const Button = styled.button<ButtonProps>`
             background-color: #F9FAFB;
           }
         `
-            default:
-                return css`
+      default:
+        return css`
           background-color: #3B82F6;
           color: white;
           
@@ -97,10 +97,10 @@ export const Button = styled.button<ButtonProps>`
             background-color: #2563EB;
           }
         `
-        }
-    }}
+    }
+  }}
 
-  ${props => props.fullWidth && css`
+  ${props => props.$fullWidth && css`
     width: 100%;
   `}
 
@@ -149,43 +149,43 @@ export const Heading = styled.h1<{ size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3
   color: #111827;
 
   ${props => {
-        switch (props.size) {
-            case 'sm':
-                return css`font-size: 1.125rem;`
-            case 'md':
-                return css`font-size: 1.25rem;`
-            case 'lg':
-                return css`font-size: 1.5rem;`
-            case 'xl':
-                return css`font-size: 1.875rem;`
-            case '2xl':
-                return css`font-size: 2.25rem;`
-            case '3xl':
-                return css`font-size: 3rem;`
-            case '4xl':
-                return css`font-size: 3.75rem;`
-            case '5xl':
-                return css`font-size: 4.5rem;`
-            default:
-                return css`font-size: 2.25rem;`
-        }
-    }}
+    switch (props.size) {
+      case 'sm':
+        return css`font-size: 1.125rem;`
+      case 'md':
+        return css`font-size: 1.25rem;`
+      case 'lg':
+        return css`font-size: 1.5rem;`
+      case 'xl':
+        return css`font-size: 1.875rem;`
+      case '2xl':
+        return css`font-size: 2.25rem;`
+      case '3xl':
+        return css`font-size: 3rem;`
+      case '4xl':
+        return css`font-size: 3.75rem;`
+      case '5xl':
+        return css`font-size: 4.5rem;`
+      default:
+        return css`font-size: 2.25rem;`
+    }
+  }}
 
   @media (min-width: 640px) {
     ${props => {
-        switch (props.size) {
-            case '2xl':
-                return css`font-size: 3rem;`
-            case '3xl':
-                return css`font-size: 3.75rem;`
-            case '4xl':
-                return css`font-size: 4.5rem;`
-            case '5xl':
-                return css`font-size: 6rem;`
-            default:
-                return ''
-        }
-    }}
+    switch (props.size) {
+      case '2xl':
+        return css`font-size: 3rem;`
+      case '3xl':
+        return css`font-size: 3.75rem;`
+      case '4xl':
+        return css`font-size: 4.5rem;`
+      case '5xl':
+        return css`font-size: 6rem;`
+      default:
+        return ''
+    }
+  }}
   }
 `
 
@@ -194,19 +194,19 @@ export const Text = styled.p<{ size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl'; color?
   line-height: 1.6;
   
   ${props => {
-        switch (props.size) {
-            case 'xs':
-                return css`font-size: 0.75rem;`
-            case 'sm':
-                return css`font-size: 0.875rem;`
-            case 'lg':
-                return css`font-size: 1.125rem;`
-            case 'xl':
-                return css`font-size: 1.25rem;`
-            default:
-                return css`font-size: 1rem;`
-        }
-    }}
+    switch (props.size) {
+      case 'xs':
+        return css`font-size: 0.75rem;`
+      case 'sm':
+        return css`font-size: 0.875rem;`
+      case 'lg':
+        return css`font-size: 1.125rem;`
+      case 'xl':
+        return css`font-size: 1.25rem;`
+      default:
+        return css`font-size: 1rem;`
+    }
+  }}
 
   ${props => props.color && css`color: ${props.color};`}
 `
@@ -221,34 +221,34 @@ export const Badge = styled.span<{ variant?: 'success' | 'warning' | 'danger' | 
   font-weight: 500;
 
   ${props => {
-        switch (props.variant) {
-            case 'success':
-                return css`
+    switch (props.variant) {
+      case 'success':
+        return css`
           background-color: #DCFCE7;
           color: #166534;
         `
-            case 'warning':
-                return css`
+      case 'warning':
+        return css`
           background-color: #FEF3C7;
           color: #92400E;
         `
-            case 'danger':
-                return css`
+      case 'danger':
+        return css`
           background-color: #FEE2E2;
           color: #991B1B;
         `
-            case 'info':
-                return css`
+      case 'info':
+        return css`
           background-color: #DBEAFE;
           color: #1E40AF;
         `
-            default:
-                return css`
+      default:
+        return css`
           background-color: #F3F4F6;
           color: #374151;
         `
-        }
-    }}
+    }
+  }}
 `
 
 // 格線布局

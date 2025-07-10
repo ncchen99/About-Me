@@ -35,10 +35,13 @@ export const BackgroundLayer = styled.div<{ $backgroundImage: string; $zIndex: n
   width: 100%;
   height: 100%;
   background-image: url(${props => props.$backgroundImage});
-  background-size: cover;
+  background-size: 100% 100%;
   background-position: center top;
   background-repeat: no-repeat;
   z-index: ${props => props.$zIndex};
+  
+  /* 確保圖片以高度為基準，水平置中 */
+  min-width: 100%;
 `;
 
 // 內容區域

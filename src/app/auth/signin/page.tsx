@@ -52,14 +52,14 @@ const InputGroup = styled.div`
   position: relative;
 `
 
-const StyledInput = styled(Input) <{ isFirst?: boolean; isLast?: boolean }>`
-  ${props => props.isFirst && `
+const StyledInput = styled(Input) <{ $isFirst?: boolean; $isLast?: boolean }>`
+  ${props => props.$isFirst && `
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     border-bottom: none;
   `}
   
-  ${props => props.isLast && `
+  ${props => props.$isLast && `
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     margin-top: -1px;
@@ -92,83 +92,83 @@ const GoogleIcon = styled.i`
 `
 
 export default function SignIn() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [loading, setLoading] = useState(false)
-    const router = useRouter()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
 
-        try {
-            const result = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-            })
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      })
 
-            if (result?.ok) {
-                router.push('/')
-            } else {
-                console.error('登入失敗')
-            }
-        } catch (error) {
-            console.error('登入錯誤:', error)
-        } finally {
-            setLoading(false)
-        }
+      if (result?.ok) {
+        router.push('/')
+      } else {
+        console.error('登入失敗')
+      }
+    } catch (error) {
+      console.error('登入錯誤:', error)
+    } finally {
+      setLoading(false)
     }
+  }
 
-    const handleGoogleSignIn = () => {
-        signIn('google', { callbackUrl: '/' })
-    }
+  const handleGoogleSignIn = () => {
+    signIn('google', { callbackUrl: '/' })
+  }
 
-    return (
-        <SignInContainer>
-            <SignInCard>
-                <SignInTitle>登入您的帳戶</SignInTitle>
+  return (
+    <SignInContainer>
+      <SignInCard>
+        <SignInTitle>登入您的帳戶</SignInTitle>
 
-                <SignInForm onSubmit={handleSubmit}>
-                    <div>
-                        <StyledInput
-                            type="email"
-                            required
-                            placeholder="電子郵件"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            isFirst
-                        />
-                        <StyledInput
-                            type="password"
-                            required
-                            placeholder="密碼"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            isLast
-                        />
-                    </div>
+        <SignInForm onSubmit={handleSubmit}>
+          <div>
+            <StyledInput
+              type="email"
+              required
+              placeholder="電子郵件"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              $isFirst
+            />
+            <StyledInput
+              type="password"
+              required
+              placeholder="密碼"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              $isLast
+            />
+          </div>
 
-                    <ButtonGroup>
-                        <Button
-                            type="submit"
-                            disabled={loading}
-                            fullWidth
-                        >
-                            {loading ? '登入中...' : '登入'}
-                        </Button>
+          <ButtonGroup>
+            <Button
+              type="submit"
+              disabled={loading}
+              $fullWidth
+            >
+              {loading ? '登入中...' : '登入'}
+            </Button>
 
-                        <GoogleButton
-                            type="button"
-                            onClick={handleGoogleSignIn}
-                            fullWidth
-                        >
-                            <GoogleIcon className='bx bxl-google' />
-                            使用 Google 登入
-                        </GoogleButton>
-                    </ButtonGroup>
-                </SignInForm>
-            </SignInCard>
-        </SignInContainer>
-    )
+            <GoogleButton
+              type="button"
+              onClick={handleGoogleSignIn}
+              $fullWidth
+            >
+              <GoogleIcon className='bx bxl-google' />
+              使用 Google 登入
+            </GoogleButton>
+          </ButtonGroup>
+        </SignInForm>
+      </SignInCard>
+    </SignInContainer>
+  )
 } 
