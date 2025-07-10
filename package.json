@@ -1,39 +1,39 @@
 {
-    "name": "ncc-intro",
-    "version": "0.1.0",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "setup": "node setup.js",
-        "setup-audio": "node create-audio-placeholders.js",
-        "prestart": "npm run setup && npm run setup-audio",
-        "dev": "vite",
-        "build": "npm run subset-font && vite build",
-        "preview": "vite preview",
-        "subset-font": "node scripts/fontSubset.js",
-        "font-build": "npm run subset-font"
-    },
-    "dependencies": {
-        "@react-three/drei": "^10.0.4",
-        "@react-three/fiber": "^9.1.0",
-        "@react-three/postprocessing": "^3.0.4",
-        "@types/three": "^0.174.0",
-        "framer-motion": "^12.5.0",
-        "lenis": "^1.2.3",
-        "motion": "^12.5.0",
-        "motion-plus": "^0.1.5",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
-        "three": "^0.174.0"
-    },
-    "devDependencies": {
-        "@types/react": "^18.2.55",
-        "@types/react-dom": "^18.2.19",
-        "@vitejs/plugin-react": "^4.2.1",
-        "autoprefixer": "^10.4.17",
-        "fontmin": "^2.0.0",
-        "postcss": "^8.4.35",
-        "tailwindcss": "^3.4.1",
-        "vite": "^5.1.0"
-    }
+  "name": "about-me",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next out",
+    "setup": "npm install && cp .env.example .env.local"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.13.8",
+    "@apollo/client-integration-nextjs": "^0.12.2",
+    "@apollo/experimental-nextjs-app-support": "^0.12.2",
+    "@types/styled-components": "^5.1.34",
+    "boxicons": "^2.1.4",
+    "firebase": "^11.10.0",
+    "graphql": "^16.11.0",
+    "next": "15.3.5",
+    "next-auth": "^4.24.11",
+    "phaser": "^3.90.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.5.0",
+    "styled-components": "^6.1.19"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.5",
+    "typescript": "^5"
+  }
 }

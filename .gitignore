@@ -1,42 +1,44 @@
-# 依賴項
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Old files
+/About-Me
+
+# dependencies
 /node_modules
 /.pnp
-.pnp.js
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# 測試
+# testing
 /coverage
 
-# 構建
+# next.js
+/.next/
+/out/
+
+# production
 /build
 
-# 環境變量
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# misc
+.DS_Store
+*.pem
 
-# 日誌
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# 編輯器設置
-.idea
-.vscode
-*.swp
-*.swo
+# env files (can opt-in for committing if needed)
+.env*
 
-# 操作系統文件
-.DS_Store
-Thumbs.db 
+# vercel
+.vercel
 
-# cursor
-./cursor
-
-/dist
-/build
-/node_modules
-/public/audio
-/public/images
-/public/models
-/public/videos
+# typescript
+*.tsbuildinfo
+next-env.d.ts

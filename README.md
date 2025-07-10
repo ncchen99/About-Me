@@ -1,136 +1,121 @@
-# 🔥 念誠ㄉ個人網頁
+# 個人介紹網頁
 
-這是一個使用React、Three.js和Tailwind CSS構建的3D場景展示網頁，主要展示一個苔蘚木頭模型，並具有豐富的互動效果和音效。
+使用 Next.js、React、Tailwind CSS 建立的個人介紹網頁，具有登入功能、GraphQL、Firebase 整合和 Phaser 互動畫面。
 
-## 功能
+## 技術堆疊
 
-- 使用Three.js渲染高質量的3D場景
-- 使用React作為前端框架
-- 使用Tailwind CSS進行樣式設計
-- 支持模型紋理和光照
-- 互動式場景控制（旋轉、縮放等）
-- 螢火蟲粒子系統
-- 背景音樂和互動音效
-- 響應式設計，支持移動設備
-- 視差滾動首頁
+- **前端框架**: Next.js 15 (App Router)
+- **UI 庫**: React 18
+- **樣式**: Tailwind CSS
+- **圖標**: Boxicons
+- **認證**: NextAuth.js
+- **資料庫**: Firebase Firestore
+- **API**: GraphQL (Apollo Client)
+- **遊戲引擎**: Phaser 3
+- **語言**: TypeScript
 
-## 特色
+## 功能特色
 
-- 首頁使用視差滾動效果，滑鼠移動時背景圖層會產生互動效果
-- 3D 場景頁面展示苔蘚木頭模型，具有真實的材質和光照效果
-- 互動式螢火蟲粒子系統，點擊時會產生特殊效果
-- 使用中文陳雨露演字體（ChenYuluoyan）
-- 字體子集化處理，減少載入資源大小
-- 優化的移動設備體驗
-- 漸進式音頻加載和播放
+- 🎨 現代化響應式設計
+- 🔐 完整的使用者認證系統
+- 📊 GraphQL API 整合
+- 🔥 Firebase 後端服務
+- 🎮 Phaser 互動遊戲元素
+- 🌐 伺服器端渲染 (SSR)
+- 📱 行動裝置優化
 
-## 目錄結構
+## 快速開始
 
-```
-├── public/                  # 靜態文件
-│   ├── images/              # 背景圖片（天空、山脈、地面）
-│   ├── audio/               # 音頻文件
-│   └── font/                # 字體文件
-│       └── subset/          # 子集化後的字體
-├── assets/                  # 3D模型和紋理
-│   └── mossy-log/           # 苔蘚木頭模型資源
-│       ├── source/          # 模型文件
-│       └── textures/        # 紋理文件
-├── src/                     # 源代碼
-│   ├── components/          # React組件
-│   │   ├── MossyLogScene.js # 3D場景渲染組件
-│   │   ├── AudioManager.js  # 音頻管理組件
-│   │   ├── ParallaxHome.js  # 視差滾動首頁組件
-│   │   └── Loader.js        # 加載動畫組件
-│   ├── styles/              # CSS樣式
-│   ├── App.js               # 主應用組件
-│   └── index.js             # 入口文件
-├── tailwind.config.js       # Tailwind配置
-├── postcss.config.js        # PostCSS配置
-└── package.json             # 依賴項配置
-```
-
-## 安裝
-
-1. 確保已安裝Node.js (v14或更高版本)
-2. 克隆本倉庫
-3. 安裝依賴：
+### 1. 安裝依賴
 
 ```bash
 npm install
 ```
 
-4. 生成字體子集（可選，但建議執行以減少字體檔案大小）：
+### 2. 設定環境變數
+
+複製 `.env.example` 到 `.env.local` 並填入您的配置：
 
 ```bash
-npm run subset-font
+cp .env.example .env.local
 ```
 
-## 運行
+需要設定的環境變數：
+- Firebase 配置
+- NextAuth 設定
+- GraphQL API 端點
+- Google OAuth 憑證 (可選)
+
+### 3. 啟動開發伺服器
 
 ```bash
+npm run dev
+```
+
+在瀏覽器中開啟 [http://localhost:3000](http://localhost:3000) 查看結果。
+
+## 專案結構
+
+```
+src/
+├── app/                 # Next.js App Router 頁面
+│   ├── api/            # API 路由
+│   ├── auth/           # 認證相關頁面
+│   └── ...
+├── components/         # 可重用組件
+├── lib/               # 工具庫和配置
+│   ├── apollo.ts      # GraphQL 客戶端
+│   ├── firebase.ts    # Firebase 配置
+│   └── providers.tsx  # Provider 包裝器
+└── types/             # TypeScript 類型定義
+```
+
+## 開發指南
+
+### 認證系統
+
+使用 NextAuth.js 提供多種登入方式：
+- 帳號密碼登入
+- Google OAuth
+- 可擴展其他 OAuth 提供者
+
+### GraphQL 整合
+
+使用 Apollo Client 進行 GraphQL 操作：
+- 支援 SSR
+- 自動快取
+- 錯誤處理
+
+### Phaser 遊戲
+
+在 `src/components/PhaserGame.tsx` 中實現互動元素：
+- 基本遊戲場景
+- 物理引擎
+- 響應式設計
+
+## 部署
+
+### Vercel (推薦)
+
+```bash
+npm run build
+```
+
+將專案推送到 GitHub 並連接 Vercel 進行自動部署。
+
+### 其他平台
+
+確保設定正確的環境變數並執行：
+
+```bash
+npm run build
 npm start
 ```
 
-應用將在[http://localhost:3000](http://localhost:3000)啟動
+## 貢獻
 
-## 控制
+歡迎提交 Issue 和 Pull Request！
 
-### 桌面版
-- 左鍵拖動：旋轉場景
-- 鼠標滾輪：縮放場景
-- 右鍵拖動：平移場景
-- 點擊木頭/花朵/苔蘚：觸發音效
-- 點擊發光粒子：互動效果
+## 授權
 
-### 移動版
-- 單指拖動：旋轉場景
-- 雙指縮放：縮放場景
-- 點擊木頭/花朵/苔蘚：觸發音效
-- 點擊發光粒子：互動效果
-
-## 技術細節
-
-- React 18
-- Three.js
-- React Three Fiber (Three.js的React渲染器)
-- React Three Drei (Three.js的實用React組件)
-- Tailwind CSS
-- Web Audio API
-
-### 視差滾動
-
-首頁的視差效果是通過追蹤滑鼠移動位置，根據不同圖層的深度設定不同的移動速度來實現的。圖層從後到前為：
-
-- 天空 (sky.png) - 最遠，移動最少
-- 山脈 (mount.png) - 中間層，移動適中
-- 地面 (ground.png) - 最近，移動最多
-
-### 音頻系統
-
-- 背景音樂在用戶首次互動後開始播放
-- 漸進式音量控制，避免突然的聲音
-- 支持靜音/取消靜音功能
-- 互動音效（點擊木頭、花朵等）
-
-### 螢火蟲粒子系統
-
-- 動態生成的粒子效果
-- 真實的物理運動模擬
-- 點擊互動效果
-- 優化的性能表現
-
-### 字體子集化
-
-為了優化網頁載入速度，我們使用 Fontmin 處理中文字體，僅保留網頁中使用到的字符。這個過程會：
-
-1. 掃描所有 JavaScript 和 HTML 文件中的中文字符
-2. 生成僅包含這些字符的字體子集
-3. 轉換為 WOFF2 格式，進一步減少檔案大小
-
-## 注意事項
-
-- 字體子集化需要有 Node.js 環境
-- 開發過程中添加新的中文文字後，需要重新運行字體子集化腳本
-- 音頻播放需要用戶互動（瀏覽器政策）
-- 建議使用現代瀏覽器以獲得最佳體驗 
+MIT License
