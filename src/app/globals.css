@@ -1,3 +1,13 @@
+/* 字體定義 */
+@font-face {
+  font-family: 'ChenYuluoyan';
+  src: url('/font/ChenYuluoyan-2.0-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+  /* 優化字體載入 */
+}
+
 /* 全局樣式 */
 * {
   margin: 0;

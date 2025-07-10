@@ -57,7 +57,11 @@ const ParallaxHome: React.FC<ParallaxHomeProps> = ({ onScrollToBottom }) => {
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
-        console.log('初始化 Lenis...');
+        // 確保頁面滾動到頂部
+        window.scrollTo(0, 0);
+
+        // 清理可能存在的舊實例
+        ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 
         // 初始化 Lenis
         const lenis = new Lenis({
@@ -85,7 +89,6 @@ const ParallaxHome: React.FC<ParallaxHomeProps> = ({ onScrollToBottom }) => {
             // 更新 ScrollTrigger
             ScrollTrigger.update();
 
-            console.log('滾動位置:', e.scroll);
             if (e.scroll > 2000 && onScrollToBottom) {
                 onScrollToBottom();
             }
@@ -111,19 +114,6 @@ const ParallaxHome: React.FC<ParallaxHomeProps> = ({ onScrollToBottom }) => {
 
         // 當 ScrollTrigger 刷新時，也刷新 Lenis
         ScrollTrigger.addEventListener('refresh', () => lenis.resize());
-
-        // 測試滾動功能
-        setTimeout(() => {
-            console.log('Lenis 已初始化，測試滾動功能...');
-            console.log('頁面高度:', document.documentElement.scrollHeight);
-            console.log('視窗高度:', window.innerHeight);
-            console.log('body 滾動高度:', document.body.scrollHeight);
-            console.log('ParallaxContainer 元素:', containerRef.current);
-            if (containerRef.current) {
-                console.log('ParallaxContainer 高度:', containerRef.current.scrollHeight);
-                console.log('ParallaxContainer 樣式:', window.getComputedStyle(containerRef.current).height);
-            }
-        }, 1000);
 
         // 初始化視差動畫
         const initParallaxAnimations = () => {
@@ -241,8 +231,18 @@ const ParallaxHome: React.FC<ParallaxHomeProps> = ({ onScrollToBottom }) => {
         });
 
         return () => {
-            lenis.destroy();
+            // 完整清理 Lenis
+            if (lenisRef.current) {
+                lenisRef.current.destroy();
+                lenisRef.current = null;
+            }
+
+            // 清理所有 ScrollTrigger
             ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+            ScrollTrigger.refresh();
+
+            // 重置滾動位置
+            window.scrollTo(0, 0);
         };
     }, [onScrollToBottom]);
 
@@ -366,37 +366,7 @@ const ParallaxHome: React.FC<ParallaxHomeProps> = ({ onScrollToBottom }) => {
                 </svg>
             </CreditsButton>
 
-            {/* 滾動測試內容 - 臨時調試用 */}
-            <div style={{
-                position: 'absolute',
-                bottom: '10px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: 100,
-                background: 'rgba(255, 255, 255, 0.9)',
-                padding: '20px',
-                borderRadius: '10px',
-                color: 'black',
-                textAlign: 'center'
-            }}>
-                <h3>滾動測試區域</h3>
-                <p>如果你看到這個區域，說明頁面高度設置正確</p>
-                <p>請嘗試向上滾動查看首頁內容</p>
-                <button
-                    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                    style={{
-                        padding: '10px 20px',
-                        marginTop: '10px',
-                        background: '#ec4899',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '5px',
-                        cursor: 'pointer'
-                    }}
-                >
-                    滾動到頂部
-                </button>
-            </div>
+
 
             {/* 素材資訊彈窗 */}
             <CreditsModal

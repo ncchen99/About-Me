@@ -35,7 +35,10 @@ export default function Home() {
   if (currentView === 'home') {
     return (
       <HomeContainer>
-        <ParallaxHome onScrollToBottom={handleScrollToBottom} />
+        <ParallaxHome
+          key={currentView} // 強制重新掛載組件
+          onScrollToBottom={handleScrollToBottom}
+        />
       </HomeContainer>
     );
   }

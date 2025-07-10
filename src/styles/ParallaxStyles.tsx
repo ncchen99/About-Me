@@ -36,7 +36,7 @@ export const BackgroundLayer = styled.div<{ $backgroundImage: string; $zIndex: n
   height: 100%;
   background-image: url(${props => props.$backgroundImage});
   background-size: cover;
-  background-position: center;
+  background-position: center top;
   background-repeat: no-repeat;
   z-index: ${props => props.$zIndex};
 `;
@@ -60,8 +60,9 @@ export const TextContainer = styled.div`
 
 // 主標題
 export const MainTitle = styled.h1`
+  font-family: 'ChenYuluoyan', var(--font-geist-sans), sans-serif;
   font-size: 3rem;
-  font-weight: bold;
+  font-weight: 100;
   margin-bottom: 1.5rem;
   filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.25));
   text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 255, 255, 0.1);
@@ -77,7 +78,9 @@ export const MainTitle = styled.h1`
 
 // 副標題容器
 export const SubtitleContainer = styled.div`
+  font-family: 'ChenYuluoyan', var(--font-geist-sans), sans-serif;
   font-size: 1.25rem;
+  font-weight: 100;
   color: #f3f4f6;
   max-width: 48rem;
   margin: 0 auto;

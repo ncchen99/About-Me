@@ -29,6 +29,7 @@ export default function RootLayout({
     <html lang="zh-TW">
       <head>
         <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet' />
+        <link rel="preload" href="/font/ChenYuluoyan-2.0-Thin.ttf" as="font" type="font/ttf" crossOrigin="anonymous" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
